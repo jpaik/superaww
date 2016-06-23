@@ -1,36 +1,40 @@
-var postLink = [];
-var loadVal = 5;
-var lastId;
-var currentId;
+var postLink = []; //To make sure there are no duplicates
+var loadVal = 5; //Load 5 images at a time (for now)
+var lastId; //Get the final image ID so I can load the next page
+var currentId; //Get the Current ID of the image so I can load next image batch.
 
 function getPosts(params){
   params = params || {};
   $.getJSON(
-    "https://www.reddit.com/u/MCorean/m/superaww.json?jsonp=?", params,
+    "https://www.reddit.com/u/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that I found and cloned.
     function (data){
       var pagechildren = data.data.children;
       $.each(
         pagechildren.slice(0, loadVal),
         function (i, post) {
-          var imgurl = post.data.url;
-          var imgext = post.data.url.split('.').pop();
+          var imgurl = httpscheck(post.data.url);
+          var imgext = imgurl.split('.').pop(); //Get the extension of the upload
+          //Make sure it's not a duplicate, text post, or youtube video.
           if($.inArray(imgurl, postLink) < 0 && imgurl.indexOf("reddit.com") < 0 && imgurl.indexOf("youtube.com") < 0){
-            postLink.push(imgurl);
-            $("#reddit-content").append( '<br>' + post.data.title );
-            $("#reddit-content").append( '<br>' + post.data.url);
+            postLink.push(imgurl); //Add it to array of duplicate checks.
+
+            $("#content").append( '<br>' + post.data.title );
+            $("#content").append( '<br>' + post.data.url);
+
             if($.inArray(imgext, ['jpg','png','jpeg','tif']) > -1 ){
-              $("#reddit-content").append( '<br>' + '<img class="image" src="' + imgurl + '">' );
+              $("#content").append( '<br>' + '<img class="image" src="' + imgurl + '">' );
             }
             else if($.inArray("reddituploads", imgurl.split('.')) > -1 ){
-              $("#reddit-content").append( '<br>' + '<img class="image" src="' + imgurl + '">' );
+              $("#content").append( '<br>' + '<img class="image" src="' + imgurl + '">' );
             }
             else if($.inArray(imgext, ['gifv']) > -1 ){
-              $("#reddit-content").append( '<br>' + '<video class="image" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video>' );
+              $("#content").append( '<br>' + '<video class="image" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video>' );
             }
             else{
-              $("#reddit-content").append( '<br>' + '<img class="image" src="' + imgurl + '.jpg">' );
+              $("#content").append( '<br>' + '<img class="image" src="' + imgurl + '.jpg">' );
             }
-            $("#reddit-content").append( '<hr>' );
+
+            $("#content").append('<hr>');
           }
         }
       );
@@ -51,6 +55,13 @@ function getPosts(params){
 }
 
 getPosts();
+
+function httpscheck(url){
+  var http = url.split(':');
+  http[0] = "https";
+  url = http.join(':');
+  return url;
+}
 
 $('#loadMore').click(function(e){
   e.preventDefault();
