@@ -14,10 +14,8 @@ function getPosts(params){
         function (i, post) {
           var imgurl = fixURL(post.data.url);
           var imgext = imgurl.split('.').pop(); //Get the extension of the upload
-          //Make sure it's not a duplicate, text post, instagram, or youtube video. (For now)
-          console.log(checkSource(imgurl)+ " : " + imgurl);
           if(imgurl != "invalid"){
-            postLink.push(imgurl); //Add it to array of duplicate checks.
+            postLink.push(post.data.url); //Add it to array of duplicate checks.
 
             $("#content").append( '<br>' + post.data.title );
             $("#content").append( '<br>' + post.data.url);
@@ -59,26 +57,29 @@ getPosts();
 
 //Check to make sure the image is served in HTTPS, is linked correctly
 function fixURL(url){
+  if(checkSource(url)){
+    var http = url.split(':');
+    http[0] = "https";
 
-  if(checkSource(url) == false){
-    return "invalid";
-  }
-
-  var http = url.split(':');
-  http[0] = "https";
-
-  if(url.indexOf("imgur") > -1 && ($.inArray(url.split('.').pop(), ['jpg','png','jpeg','tif', 'gif', 'gifv']) < 0)){
-    var fix = url.split('/');
-    url = "https://" + "i.imgur.com/" + fix[fix.length -1] + ".jpg";
+    if(url.indexOf("imgur") > -1 && ($.inArray(url.split('.').pop(), ['jpg','png','jpeg','tif', 'gif', 'gifv']) < 0)){
+      var fix = url.split('/');
+      url = "https://" + "i.imgur.com/" + fix[fix.length -1] + ".jpg";
+    }
+    else{
+      url = http.join(':');
+    }
+    return url;
   }
   else{
-    url = http.join(':');
+      return "invalid";
   }
-  return url;
 }
 
+//Make sure it's not a duplicate, album, text post, instagram, or youtube video. (For now)
 function checkSource(imgurl){
+  console.log("Ran checkSource");
   if($.inArray(imgurl, postLink) > -1){
+    console.log("Duplicate");
     return false;
   }
   if(imgurl.indexOf("reddit.com") > -1 || imgurl.indexOf("youtube.com") > -1 || imgurl.indexOf("instagram.com") > -1){
@@ -87,9 +88,9 @@ function checkSource(imgurl){
   if(imgurl.indexOf("imgur.com/a/") > -1){
     return false;
   }
-  else{
-    return true;
-  }
+
+  return true;
+
 }
 
 //Load More images when clicking load more.
