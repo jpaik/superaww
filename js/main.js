@@ -27,7 +27,7 @@ function getPosts(params){
               $("#content").append( '<br>' + '<img class="image" src="' + imgurl + '">' );
             }
             else if($.inArray(imgext, ['gifv']) > -1 ){ //If the post is a gif, make it a webm and if not, mp4
-              $("#content").append( '<br>' + '<video class="image" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video>' );
+              $("#content").append( '<br>' + '<video class="image" controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video>' );
             }
             else{ //Otherwise just add a .jpg extension to the end. Brute force.
               $("#content").append( '<br>' + '<img class="image" src="' + imgurl + '.jpg">' );
