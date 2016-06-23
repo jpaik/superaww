@@ -6,16 +6,17 @@ var currentId; //Get the Current ID of the image so I can load next image batch.
 function getPosts(params){
   params = params || {};
   $.getJSON(
-    "https://www.reddit.com/u/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that I found and cloned.
+    "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that I found and cloned.
     function (data){
       var pagechildren = data.data.children;
       $.each(
         pagechildren.slice(0, loadVal),
         function (i, post) {
-          var imgurl = httpscheck(post.data.url);
+          var imgurl = fixURL(post.data.url);
           var imgext = imgurl.split('.').pop(); //Get the extension of the upload
-          //Make sure it's not a duplicate, text post, or youtube video.
-          if($.inArray(imgurl, postLink) < 0 && imgurl.indexOf("reddit.com") < 0 && imgurl.indexOf("youtube.com") < 0){
+          //Make sure it's not a duplicate, text post, instagram, or youtube video. (For now)
+          console.log(checkSource(imgurl)+ " : " + imgurl);
+          if(checkSource(imgurl)){
             postLink.push(imgurl); //Add it to array of duplicate checks.
 
             $("#content").append( '<br>' + post.data.title );
@@ -56,13 +57,38 @@ function getPosts(params){
 
 getPosts();
 
-function httpscheck(url){
+//Check to make sure the image is served in HTTPS, is linked correctly
+function fixURL(url){
+
   var http = url.split(':');
   http[0] = "https";
-  url = http.join(':');
+
+  if(url.indexOf("imgur") > -1 && ($.inArray(url.split('.').pop(), ['jpg','png','jpeg','tif', 'gif', 'gifv']) < 0)){
+    var fix = url.split('/');
+    url = "https://" + "i.imgur.com/" + fix[fix.length -1] + ".jpg";
+  }
+  else{
+    url = http.join(':');
+  }
   return url;
 }
 
+function checkSource(imgurl){
+  if($.inArray(imgurl, postLink) > -1){
+    return false;
+  }
+  if(imgurl.indexOf("reddit.com") > -1 || imgurl.indexOf("youtube.com") > -1 || imgurl.indexOf("instagram.com") > -1){
+    return false;
+  }
+  if(imgurl.indexOf("imgur.com/a/") > -1){
+    return false;
+  }
+  else{
+    return true;
+  }
+}
+
+//Load More images when clicking load more.
 $('#loadMore').click(function(e){
   e.preventDefault();
   loadVal += 5;
