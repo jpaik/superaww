@@ -16,7 +16,7 @@ function getPosts(params){
           var imgext = imgurl.split('.').pop(); //Get the extension of the upload
           //Make sure it's not a duplicate, text post, instagram, or youtube video. (For now)
           console.log(checkSource(imgurl)+ " : " + imgurl);
-          if(checkSource(imgurl)){
+          if(imgurl != "invalid"){
             postLink.push(imgurl); //Add it to array of duplicate checks.
 
             $("#content").append( '<br>' + post.data.title );
@@ -59,6 +59,10 @@ getPosts();
 
 //Check to make sure the image is served in HTTPS, is linked correctly
 function fixURL(url){
+
+  if(checkSource(url) == false){
+    return "invalid";
+  }
 
   var http = url.split(':');
   http[0] = "https";
