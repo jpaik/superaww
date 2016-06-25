@@ -7,16 +7,23 @@
 		<meta name="author" content="James Paik">
 		<meta name="description" content="Super Aww! Get pictures of cute animals daily!">
 
+    <link rel="stylesheet" href="css/lightbox.min.css">
     <link rel="stylesheet" href="css/style.css">
   </head>
 
   <body>
-    <div id="content">
+    <h1>Super Aww</h1>
+    <p>A collection of the cutest pictures on the internet, updated daily</p>
+    <div id="content" class="grid">
+      <div class="grid-sizer"></div>
+      <div class="gutter-sizer"></div>
     </div>
-
-    <a href="#" id="loadMore">Load More Images!</a>
+    <div class="loading"><img src="images/gears.gif"></div>
 
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="js/lightbox.min.js"></script>
+    <script src="js/imagesloaded.min.js"></script>
+    <script src="js/masonry.min.js"></script>
     <script src="js/main.js"></script>
 
   </body>

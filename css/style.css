@@ -1,3 +1,55 @@
-.image{
-  max-width: 50%;
+* { box-sizing: border-box; }
+
+/* force scrollbar */
+html { overflow-y: scroll; }
+
+body { font-family: sans-serif; }
+
+.lightbox {
+  position:fixed !important;
+  top:20px !important;
+  left: 1% !important;
+}
+.lb-dataContainer{
+  background-color: rgba(255,255,255,.8);
+}
+.lb-caption{
+  color:black;
+}
+
+.grid {
+  background: #DDD;
+}
+
+.grid:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.grid-sizer,
+.grid-item {
+  width: 28%;
+}
+
+.gutter-sizer { width: 4%; }
+
+.grid-item {
+  float: left;
+  margin-bottom: 10px;
+}
+
+.grid-item img {
+  display: block;
+  max-width: 100%;
+}
+
+.gif{
+  max-width: 100%;
+}
+
+.loading{
+  margin: 0 auto;
+  width: 200px;
+  height: 200px;
 }
