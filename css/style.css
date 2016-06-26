@@ -1,9 +1,13 @@
-* { box-sizing: border-box; }
+*, *:before, *:after {box-sizing:  border-box !important;}
 
 /* force scrollbar */
 html { overflow-y: scroll; }
 
 body { font-family: sans-serif; }
+
+.heading{
+
+}
 
 .lightbox {
   position:fixed !important;
@@ -17,26 +21,14 @@ body { font-family: sans-serif; }
   color:black;
 }
 
-.grid {
-  background: #DDD;
-}
-
 .grid:after {
   content: '';
   display: block;
   clear: both;
 }
 
-.grid-sizer,
-.grid-item {
-  width: 28%;
-}
-
-.gutter-sizer { width: 4%; }
-
 .grid-item {
   float: left;
-  margin-bottom: 10px;
 }
 
 .grid-item img {
@@ -52,4 +44,17 @@ body { font-family: sans-serif; }
   margin: 0 auto;
   width: 200px;
   height: 200px;
+}
+
+.container{
+  width:100%;
+  padding: 0px;
+}
+
+.col-md-4{
+  padding: 0;
+}
+
+.panel-body{
+  padding: 0;
 }

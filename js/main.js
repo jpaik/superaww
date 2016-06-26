@@ -40,24 +40,24 @@ function getPosts(params){
 }
 
 function buildContent(title, imgurl, rawurl, imgext){
-  var c = $("#content");
-  var html = '<div class="grid-item">';
+  var c = $(".grid");
+  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading">'+title+'</div><div class="panel-body">';
 
   if($.inArray(imgext, ['gifv', 'gif']) > -1 ){ //If the post is a gif, make it a webm and if not, mp4
-    html += '<video class="gif" controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div>' ;
+    html += '<video class="gif" controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div></div>' ;
   }
   else{
     html += '<a data-lightbox="set" data-title="'+title+'" href="'+imgurl+'">';
     if($.inArray(imgext, ['jpg','png','jpeg','tif']) > -1 ){ //If the post already has a picture extension
-     html += '<br>' + '<img class="image" src="' + imgurl + '">';
+     html += '<img class="image" src="' + imgurl + '">';
     }
     else if($.inArray("reddituploads", imgurl.split('.')) > -1 ){ //If the picture is a reddit upload instead
-      html += '<br>' + '<img class="image" src="' + imgurl + '">';
+      html += '<img class="image" src="' + imgurl + '">';
     }
     else{ //Otherwise just add a .jpg extension to the end. Brute force.
-      html += '<br>' + '<img class="image" src="' + imgurl + '.jpg">';
+      html += '<img class="image" src="' + imgurl + '.jpg">';
     }
-    html += '</a></div>';
+    html += '</a></div></div>';
   }
   c.append(html);
 }
@@ -159,23 +159,25 @@ $('#loadMore').click(function(e){
   }
 });
 
-//Init the function
-getPosts();
 
-//Lightbox and masonry
-lightbox.option({
-  'resizeDuration': 200,
-  'showImageNumberLabel': false,
-  'fadeDuration': 200,
-  'positionFromTop': 0
-});
+$(document).ready(function (){
+  //Get the posts
+  getPosts();
 
-var $grid = $('.grid').masonry({
-  itemSelector: '.grid-item',
-  columnWidth: '.grid-sizer',
-  gutter: '.gutter-sizer',
-  percentPosition: true
-});
-$grid.imagesLoaded().progress( function() {
-  $grid.masonry();
+  //Lightbox and masonry
+  lightbox.option({
+    'resizeDuration': 200,
+    'showImageNumberLabel': false,
+    'fadeDuration': 200,
+    'positionFromTop': 0
+  });
+
+  var $grid = $('.grid').masonry({
+    itemSelector: '.grid-item',
+    columnWidth: '.grid-sizer',
+    percentPosition: true
+  });
+  $grid.imagesLoaded().progress( function() {
+    $grid.masonry();
+  });
 });
