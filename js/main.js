@@ -10,6 +10,7 @@ function getPosts(params){
     "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that I found and cloned.
     function (data){
       var pagechildren = data.data.children;
+      var html = '';
       $.each(
         pagechildren.slice(loadVal-10, loadVal),
         function (i, post) {
@@ -17,8 +18,7 @@ function getPosts(params){
           var imgext = imgurl.split('.').pop(); //Get the extension of the upload
           if(imgurl != "invalid"){
             postLink.push(post.data.url); //Add it to array of duplicate checks.
-
-            buildContent(post.data.title, imgurl, post.data.url, imgext);
+            html += buildContent(post.data.title, imgurl, post.data.url, imgext);
           }
         }
       );
@@ -35,16 +35,33 @@ function getPosts(params){
         lastId = undefined; //Hopefully this doesn't happen and we run out of posts
       }
       $('.loading').hide();
+      var $el = $(html).filter('div.grid-item');
+      $('.grid').masonryImagesReveal($el);
     }
   );
 }
 
+$.fn.masonryImagesReveal = function( $items ) {
+  var msnry = this.data('masonry');
+  var itemSelector = msnry.options.itemSelector;
+  $items.hide();
+
+  this.append( $items );
+  $items.imagesLoaded().progress(function( imgLoad, image ) {
+    // image is imagesLoaded class, not <img>, <img> is image.img
+    var $item = $( image.img ).parents(itemSelector);
+    $item.show();
+    msnry.appended( $item );
+  });
+  return this;
+};
+
 function buildContent(title, imgurl, rawurl, imgext){
   var c = $(".grid");
-  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading">'+title+'</div><div class="panel-body">';
+  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading">'+title+'<br><a href="'+rawurl +'">Direct Link</a>'+'</div><div class="panel-body">';
 
-  if($.inArray(imgext, ['gifv', 'gif']) > -1 ){ //If the post is a gif, make it a webm and if not, mp4
-    html += '<video class="gif" controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div></div>' ;
+  if($.inArray(imgext, ['gifv', 'gif']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
+    html += '<video controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div></div>' ;
   }
   else{
     html += '<a data-lightbox="set" data-title="'+title+'" href="'+imgurl+'">';
@@ -59,7 +76,8 @@ function buildContent(title, imgurl, rawurl, imgext){
     }
     html += '</a></div></div>';
   }
-  c.append(html);
+  //c.append($el).masonry('appended', $el, true);
+  return html;
 }
 
 //Check to make sure the image is served in HTTPS, is linked correctly
@@ -75,7 +93,7 @@ function fixURL(url){
     }
     else if(url.indexOf("gfycat") > -1 && ($.inArray(url.split('.').pop(), ['gif', 'gifv']) < 0)){
       var fix = url.split('/');
-      url = "https://" + "zippy.gfycat.com/" + fixfix[fix.length -1] + ".gifv";
+      url = "https://" + "zippy.gfycat.com/" + fix[fix.length -1] + ".gifv";
     }
     else{
       url = http.join(':');
@@ -108,7 +126,7 @@ function checkSource(imgurl){
 //Load more images when scrolled to bottom
 $(window).scroll(function() {
    if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-     loadVal += 10; //Load only 5 at a time... For now?
+     loadVal += 10;
      if(loadVal > 50){
        if(lastId){
          loadVal = 10;
@@ -129,36 +147,11 @@ $(window).scroll(function() {
          getPosts();
        }
      }
+     $("html, body").animate({
+         scrollTop: $(window).scrollTop() - 25
+     }, 100);
    }
-    $grid.masonry();
 });
-
-//Load More images when clicking load more.
-$('#loadMore').click(function(e){
-  e.preventDefault();
-  loadVal += 10; //Load only 5 at a time... For now?
-  if(loadVal > 50){
-    if(lastId){
-      loadVal = 10;
-      getPosts({
-        count: '50',
-        after: 't3_' + lastId
-      });
-    }
-  }
-  else{
-    if(currentId){
-      getPosts({
-        count: '50',
-        after: 't3_' + currentId
-      });
-    }
-    else{
-      getPosts();
-    }
-  }
-});
-
 
 $(document).ready(function (){
   //Get the posts
@@ -175,9 +168,10 @@ $(document).ready(function (){
   var $grid = $('.grid').masonry({
     itemSelector: '.grid-item',
     columnWidth: '.grid-sizer',
+  //  gutter: 10,
     percentPosition: true
   });
-  $grid.imagesLoaded().progress( function() {
-    $grid.masonry();
+  $grid.imagesLoaded().progress(function() {
+    $grid.masonry('layout');
   });
 });

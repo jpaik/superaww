@@ -6,7 +6,7 @@ html { overflow-y: scroll; }
 body { font-family: sans-serif; }
 
 .heading{
-
+  padding-bottom: 20px;
 }
 
 .lightbox {
@@ -29,14 +29,11 @@ body { font-family: sans-serif; }
 
 .grid-item {
   float: left;
+  margin: -10px;
 }
 
 .grid-item img {
   display: block;
-  max-width: 100%;
-}
-
-.gif{
   max-width: 100%;
 }
 
@@ -54,7 +51,16 @@ body { font-family: sans-serif; }
 .col-md-4{
   padding: 0;
 }
+.panel{
+  margin-bottom: 0px;
+}
 
 .panel-body{
   padding: 0;
+}
+
+@media(max-width:768px){
+  .heading{
+    padding: 10px 20px;
+  }
 }
