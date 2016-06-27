@@ -1,5 +1,4 @@
 var postLink = []; //To make sure there are no duplicates
-var loadVal = 10; //Load 5 images at a time (for now)
 var lastId; //Get the final image ID so I can load the next page
 var currentId; //Get the Current ID of the image so I can load next image batch.
 
@@ -7,12 +6,13 @@ function getPosts(params){
   $('.loading').show();
   params = params || {};
   $.getJSON(
-    "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that I found and cloned.
+    "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that includes the images
     function (data){
       var pagechildren = data.data.children;
       var html = '';
       $.each(
-        pagechildren.slice(loadVal-10, loadVal),
+        //pagechildren.slice(loadVal-10, loadVal),
+        pagechildren.slice(),
         function (i, post) {
           var imgurl = fixURL(post.data.url);
           var imgext = imgurl.split('.').pop(); //Get the extension of the upload
@@ -25,12 +25,8 @@ function getPosts(params){
       if (pagechildren && pagechildren.length > 0) { //If there are posts
         lastId = pagechildren[pagechildren.length - 1].data.id; //Get the last post's id so we can load at that point during new page
         if($.isEmptyObject(params) == false){ //If it's not the home page
-          currentId = pagechildren[pagechildren.length - 25].data.id; //Then we can use this to load the next 5 images of the same page.
-        //  console.log("Current ID Title: "+pagechildren[pagechildren.length - 25].data.title);
+          currentId = pagechildren[pagechildren.length - 25].data.id; //If we decide to load x amount of pics at a time
         }
-        //console.log("Next ID Title: "+pagechildren[pagechildren.length - 1].data.title);
-        //console.log("Loaded LastID: " + lastId);
-        //console.log("Loaded CurrentID: " +currentId);
       } else {
         lastId = undefined; //Hopefully this doesn't happen and we run out of posts
       }
@@ -45,23 +41,40 @@ $.fn.masonryImagesReveal = function( $items ) {
   var msnry = this.data('masonry');
   var itemSelector = msnry.options.itemSelector;
   $items.hide();
-
   this.append( $items );
   $items.imagesLoaded().progress(function( imgLoad, image ) {
-    // image is imagesLoaded class, not <img>, <img> is image.img
     var $item = $( image.img ).parents(itemSelector);
+    var video = $item.children('.panel-body').children('video');
+    if(video.length > 0){
+      video.on("loadedmetadata loadeddata", function(){
+        if(this.videoHeight > this.height){
+            $(image.img).parent().css("min-height", this.height + "px");
+        }
+        else{
+          $(image.img).parent().css("min-height", this.videoHeight + "px");
+        }
+        $('.grid').masonry('layout');
+      });
+    }
     $item.show();
     msnry.appended( $item );
   });
   return this;
 };
 
+
 function buildContent(title, imgurl, rawurl, imgext){
   var c = $(".grid");
   var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading text-center"><a href="'+rawurl +'">'+ title +'</a>'+'</div><div class="panel-body">';
 
-  if($.inArray(imgext, ['gifv', 'gif']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
-    html += '<video controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div></div>' ;
+  if($.inArray(imgext, ['gifv', 'gif', 'mp4', 'webm']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
+    var mp4 = imgurl.split('.')
+    var webm = imgurl.split('.');
+    mp4[mp4.length -1] = "mp4";
+    webm[webm.length -1 ] = "webm";
+    mp4 = mp4.join('.');
+    webm = webm.join('.');
+    html += '<img /><video controls="true" preload="auto" autoplay loop>'+'<source src="' + webm + '" type="video/webm">'+'<source src="' + mp4 + '"></video></div></div>' ;
   }
   else{
     html += '<a data-lightbox="set" data-title="'+title+'" href="'+imgurl+'">';
@@ -86,12 +99,13 @@ function fixURL(url){
     var http = url.split(':');
     http[0] = "https";
 
-    //For now, do gifs as jpg until I find out how to check type
-    if(url.indexOf("imgur") > -1 && ($.inArray(url.split('.').pop(), ['jpg','png','jpeg','tif', 'gif', 'gifv']) < 0)){
+    //Make sure it doesn't have an extension. For now, do gifs as jpg until I find out how to check type
+    if((url.indexOf("imgur") > -1) && ($.inArray(url.split('.').pop(), ['jpg','png','jpeg','tif', 'gif', 'gifv', 'mp4','webm']) < 0)){
+
       var fix = url.split('/');
       url = "https://" + "i.imgur.com/" + fix[fix.length -1] + ".jpg";
     }
-    else if(url.indexOf("gfycat") > -1 && ($.inArray(url.split('.').pop(), ['gif', 'gifv']) < 0)){
+    else if((url.indexOf("gfycat") > -1) && ($.inArray(url.split('.').pop(), ['gif', 'gifv']) < 0)){
       var fix = url.split('/');
       url = "https://" + "zippy.gfycat.com/" + fix[fix.length -1] + ".gifv";
     }
@@ -116,8 +130,8 @@ function checkSource(imgurl){
   if(imgurl.indexOf("imgur.com/a/") > -1 || imgurl.indexOf("imgur.com/gallery/") > -1){
     return false;
   }
-  //Create a whitelist so that non-whitelisted images are not shown.
-  if(imgurl.indexOf("imgur.com") < 0 && imgurl.indexOf("reddituploads") < 0 && imgurl.indexOf("gfycat") < 0 && imgurl.indexOf("redd.it")){
+  //Create a whitelist so that non-whitelisted images are not shown. (&& imgurl.indexOf("gfycat") < 0) - Gfycat is wierd
+  if(imgurl.indexOf("imgur.com") < 0 && imgurl.indexOf("reddituploads") < 0  && imgurl.indexOf("redd.it")){
     return false;
   }
   return true;
@@ -126,26 +140,13 @@ function checkSource(imgurl){
 //Load more images when scrolled to bottom
 $(window).scroll(function() {
    if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-     loadVal += 10;
-     if(loadVal > 50){
-       if(lastId){
-         loadVal = 10;
-         getPosts({
-           count: '50',
-           after: 't3_' + lastId
-         });
-       }
+     if(lastId){
+       getPosts({
+         after: 't3_' + lastId
+       });
      }
      else{
-       if(currentId){
-         getPosts({
-           count: '50',
-           after: 't3_' + currentId
-         });
-       }
-       else{
-         getPosts();
-       }
+       getPosts();
      }
    }
 });
