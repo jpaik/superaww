@@ -11,7 +11,7 @@ Make the images click and draggable?(Maybe not needed)
 Get a domain name and proper hosting?  
 ~~Get the web application running~~  
 ~~Add checks for non directly linked images~~  
-~~Add padding to panel and fix alignment of masonry~~
-~~Create more functions to make it run smoother~~
-~~Popup zoom in picture when clicked~~
-~~Design the front end for the application~~
+~~Add padding to panel and fix alignment of masonry~~  
+~~Create more functions to make it run smoother~~  
+~~Popup zoom in picture when clicked~~  
+~~Design the front end for the application~~  
