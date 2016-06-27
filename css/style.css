@@ -1,12 +1,22 @@
 *, *:before, *:after {box-sizing:  border-box !important;}
 
 /* force scrollbar */
-html { overflow-y: scroll; }
+html {
+  overflow-y: scroll;
+}
 
-body { font-family: sans-serif; }
+body{
+  font-family: 'Arial', sans-serif;
+}
 
 .heading{
   padding-bottom: 20px;
+}
+.heading h1{
+  font-size: 4em;
+}
+.heading p{
+  font-size: 1.5em;
 }
 
 .lightbox {
@@ -17,8 +27,9 @@ body { font-family: sans-serif; }
 .lb-dataContainer{
   background-color: rgba(255,255,255,.8);
 }
-.lb-caption{
+.lb-data .lb-caption{
   color:black;
+  font-size: 1em;
 }
 
 .grid:after {
@@ -48,6 +59,12 @@ body { font-family: sans-serif; }
   padding: 0;
 }
 
+.panel-heading a{
+  text-decoration: none;
+  color: #333;
+  font-size: 1.25em;
+}
+
 .loading{
   margin: 0 auto;
   width: 200px;
@@ -70,6 +87,12 @@ body { font-family: sans-serif; }
 @media(max-width:768px){
   .heading{
     padding: 10px 20px;
+  }
+  .heading h1{
+    font-size: 3em;
+  }
+  .heading p{
+    font-size: 1.25em;
   }
   .col-md-4{
     padding:0;
