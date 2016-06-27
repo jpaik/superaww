@@ -58,7 +58,7 @@ $.fn.masonryImagesReveal = function( $items ) {
 
 function buildContent(title, imgurl, rawurl, imgext){
   var c = $(".grid");
-  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading">'+title+'<br><a href="'+rawurl +'">Direct Link</a>'+'</div><div class="panel-body">';
+  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading"><a href="'+rawurl +'">'+ title +'</a>'+'</div><div class="panel-body">';
 
   if($.inArray(imgext, ['gifv', 'gif']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
     html += '<video controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'webm" type="video/webm">'+'<source src="' + imgurl.substring(0,imgurl.length-4) + 'mp4">' + '</video></div></div>' ;
@@ -168,7 +168,6 @@ $(document).ready(function (){
   var $grid = $('.grid').masonry({
     itemSelector: '.grid-item',
     columnWidth: '.grid-sizer',
-  //  gutter: 10,
     percentPosition: true
   });
   $grid.imagesLoaded().progress(function() {
