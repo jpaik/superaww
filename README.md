@@ -4,7 +4,7 @@ Live link here: [superaww](https://jpaik.github.io/superaww)
 Creating a Reddit API-based website that shows pictures of cute animals.  
 
 ## Todo List
-Get gif links working instead of bruting them to jpg  
+Get gif links working instead of bruting them to jpg (Check the mime type)  
 Add a check for removed sources or deleted photos  
 Display a navbar with info and functions  
 Make the images click and draggable?(Maybe not needed)  
