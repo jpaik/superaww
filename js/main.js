@@ -11,7 +11,6 @@ function getPosts(params){
       var pagechildren = data.data.children;
       var html = '';
       $.each(
-        //pagechildren.slice(loadVal-10, loadVal),
         pagechildren.slice(),
         function (i, post) {
           var imgurl = fixURL(post.data.url);
@@ -89,7 +88,6 @@ function buildContent(title, imgurl, rawurl, imgext){
     }
     html += '</a></div></div>';
   }
-  //c.append($el).masonry('appended', $el, true);
   return html;
 }
 
