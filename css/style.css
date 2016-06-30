@@ -1,22 +1,46 @@
 *, *:before, *:after {box-sizing:  border-box !important;}
 
-/* force scrollbar */
 html {
   overflow-y: scroll;
 }
 
 body{
   font-family: 'Arial', sans-serif;
+  margin-top: 80px;
 }
 
-.heading{
-  padding-bottom: 20px;
+/*Navbar*/
+.navbar{
+  min-height: 0;
 }
-.heading h1{
-  font-size: 4em;
+.navbar .container{
+  width: 80%;
 }
-.heading p{
+.navbar-default{
+  border-bottom: 1px solid rgba(0,0,0,.5);
+}
+.navbar-default .navbar-brand{
   font-size: 1.5em;
+  color:black;
+}
+.navbar-default, .navbar-inverse{
+  transition: background-color ease .3s, color ease .3s;
+}
+.navbar-inverse{
+  background-color: rgba(0,0,0,.8);
+  border:none;
+}
+.navbar-inverse .navbar-brand{
+  font-size: 1.5em;
+  color:white;
+}
+.navbar-inverse .navbar-nav > li > a{
+  color: #f0f0f0;
+}
+
+/*Modal*/
+.modal-header h4{
+  font-size: 2em;
 }
 
 .lightbox {
@@ -55,6 +79,10 @@ body{
   padding: 0;
 }
 
+.panel{
+  border-width: 2px;
+}
+
 .panel-body{
   padding: 0;
 }
@@ -72,7 +100,7 @@ body{
 }
 
 .container{
-  width:100%;
+  width: 100%;
   padding: 0px;
 }
 
@@ -82,9 +110,15 @@ body{
     width: calc(100%/3 - .5%);
     margin: 0.25%;
   }
+  .container{
+    width: 95%;
+  }
 }
 
 @media(max-width:768px){
+  body{
+    margin-top: 60px;
+  }
   .heading{
     padding: 10px 20px;
   }

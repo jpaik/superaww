@@ -2,11 +2,11 @@ var postLink = []; //To make sure there are no duplicates
 var lastId; //Get the final image ID so I can load the next page
 var currentId; //Get the Current ID of the image so I can load next image batch.
 
-function getPosts(params){
+function getPosts(url, params){
   $('.loading').show();
   params = params || {};
   $.getJSON(
-    "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?", params, //Multi subreddit that includes the images
+    url, params, //Multi subreddit that includes the images
     function (data){
       var pagechildren = data.data.children;
       var html = '';
@@ -135,25 +135,13 @@ function checkSource(imgurl){
   return true;
 }
 
-//Load more images when scrolled to bottom
-$(window).scroll(function() {
-   if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-     if(lastId){
-       getPosts({
-         after: 't3_' + lastId
-       });
-     }
-     else{
-       getPosts();
-     }
-   }
-});
-
 $(document).ready(function (){
-  //Get the posts
-  getPosts();
+  var jsonurl= "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
 
-  //Lightbox and masonry
+  //Get the posts
+  getPosts(jsonurl);
+
+  /*Light Box and Masonry*/
   lightbox.option({
     'resizeDuration': 200,
     'showImageNumberLabel': false,
@@ -169,4 +157,50 @@ $(document).ready(function (){
   $grid.imagesLoaded().progress(function() {
     $grid.masonry('layout');
   });
+
+  //Initialize Tooltip
+  $('[data-toggle="tooltip"]').tooltip()
+
+  /*Image Load and Navbar*/
+  var lastScrollTop = 0;
+  $(window).scroll(function(event) {
+    //Get more Posts when scroll to bottom
+     if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+       if(lastId){
+         getPosts(jsonurl,{
+           after: 't3_' + lastId
+         });
+       }
+       else{
+         getPosts(jsonurl);
+       }
+     }
+     //Display and Hide Navbar
+     var st = $(this).scrollTop();
+     if(st > 100){
+       $('nav').addClass('navbar-inverse');
+       $('nav').removeClass('navbar-default');
+     }
+     else{
+       $('nav').removeClass('navbar-inverse');
+       $('nav').addClass('navbar-default');
+     }
+     if(st > lastScrollTop){
+       if($('nav').is(":visible")){
+         $('nav').slideUp("fast");
+       }
+     }else{
+      if($('nav').is(":hidden")){
+        $('nav').slideDown("fast");
+      }
+     }
+     lastScrollTop = st;
+  });
+
+  /*Scroll To Top*/
+  $('#top').click(function(){
+      $('html,body').animate({ scrollTop: 0 }, 'slow');
+      return false;
+  });
+
 });
