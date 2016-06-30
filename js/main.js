@@ -136,7 +136,8 @@ function checkSource(imgurl){
 }
 
 $(document).ready(function (){
-  var jsonurl= "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
+  var jsonurl = "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
+  var animal = "";
 
   //Get the posts
   getPosts(jsonurl);
@@ -159,7 +160,7 @@ $(document).ready(function (){
   });
 
   //Initialize Tooltip
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
 
   /*Image Load and Navbar*/
   var lastScrollTop = 0;
@@ -185,7 +186,7 @@ $(document).ready(function (){
        $('nav').removeClass('navbar-inverse');
        $('nav').addClass('navbar-default');
      }
-     if(st > lastScrollTop){
+     if(st > lastScrollTop && st > 20){
        if($('nav').is(":visible")){
          $('nav').slideUp("fast");
        }
@@ -201,6 +202,33 @@ $(document).ready(function (){
   $('#top').click(function(){
       $('html,body').animate({ scrollTop: 0 }, 'slow');
       return false;
+  });
+
+  /*Show Pictures of something else*/
+  $('.changeAnimal').each(function(){
+    $(this).on("click",function(e){
+      e.preventDefault();
+      if(($(this).data('animal') == "all") && animal != ""){
+        postLink = [];
+        animal = "";
+        jsonurl = "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
+        $('.panel').each(function(){
+          $(this).remove();
+        });
+        getPosts(jsonurl);
+        $('.grid').masonry('layout');
+      }
+      else if(($(this).data('animal') == "dog") && animal != "dog"){
+        postLink = [];
+        animal = "dog";
+        jsonurl = "https://www.reddit.com/r/DogPictures.json?jsonp=?";
+        $('.panel').each(function(){
+          $(this).remove();
+        });
+        getPosts(jsonurl);
+        $('.grid').masonry('layout');
+      }
+    });
   });
 
 });
