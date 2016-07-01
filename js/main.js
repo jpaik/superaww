@@ -1,6 +1,7 @@
 var postLink = []; //To make sure there are no duplicates
 var lastId; //Get the final image ID so I can load the next page
 var currentId; //Get the Current ID of the image so I can load next image batch.
+var columns = 3;
 
 function getPosts(url, params){
   $('.loading').show();
@@ -64,7 +65,8 @@ $.fn.masonryImagesReveal = function( $items ) {
 
 function buildContent(title, imgurl, rawurl, imgext){
   var c = $(".grid");
-  var html = '<div class="grid-item panel panel-default col-md-4"><div class="panel-heading text-center"><a href="'+rawurl +'">'+ title +'</a>'+'</div><div class="panel-body">';
+  var col = (columns == 3) ? 'col-md-4' : 'col-md-6';
+  var html = '<div class="grid-item panel panel-default '+ col +'"><div class="panel-heading text-center"><a href="'+rawurl +'">'+ title +'</a>'+'</div><div class="panel-body">';
 
   if($.inArray(imgext, ['gifv', 'gif', 'mp4', 'webm']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
     var mp4 = imgurl.split('.')
@@ -138,6 +140,7 @@ function checkSource(imgurl){
 $(document).ready(function (){
   var jsonurl = "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
   var animal = "";
+  var isMobile = false;
 
   //Get the posts
   getPosts(jsonurl);
@@ -213,23 +216,66 @@ $(document).ready(function (){
         postLink = [];
         animal = "";
         jsonurl = "https://www.reddit.com/user/MCorean/m/superaww.json?jsonp=?";
-        $('.panel').each(function(){
-          $(this).remove();
+        $('.panel').fadeOut('fast').promise().done(function(){
+          getPosts(jsonurl);
+          $('.grid').masonry('layout');
         });
-        getPosts(jsonurl);
-        $('.grid').masonry('layout');
       }
       else if(($(this).data('animal') == "dog") && animal != "dog"){
         postLink = [];
         animal = "dog";
         jsonurl = "https://www.reddit.com/r/DogPictures.json?jsonp=?";
-        $('.panel').each(function(){
-          $(this).remove();
+        $('.panel').fadeOut('fast').promise().done(function(){
+          getPosts(jsonurl);
+          $('.grid').masonry('layout');
         });
-        getPosts(jsonurl);
-        $('.grid').masonry('layout');
       }
     });
   });
 
+  /*Change colums from 2 pictures to 3 and back*/
+  $('.columnToggle').on("click",function(e){
+    e.preventDefault();
+    if(!checkMobile() && $(window).width() > 768){ //Make sure they're not on mobile device
+      if(columns == 3){
+        $('.panel').removeClass('col-md-4').addClass('col-md-6');
+        $('.grid-sizer').removeClass('col-md-4').addClass('col-md-6');
+        $('.grid').parent().css('width','65%');
+        columns = 2;
+        $('.grid').masonry('layout');
+      }
+      else if(columns == 2){
+        $('.panel').removeClass('col-md-6').addClass('col-md-4');
+        $('.grid-sizer').removeClass('col-md-6').addClass('col-md-4');
+        $('.grid').parent().css('width','95%');
+        columns = 3;
+        $('.grid').masonry('layout');
+      }
+    }
+  });
+  $(window).on("resize",function(){
+    var win = $(this);
+    if(win.width() < 768){
+      $('.grid').parent().css('width','100%');
+    }
+    else{
+      if(columns == 3){
+        $('.grid').parent().css('width','95%');
+      }
+      else{
+        $('.grid').parent().css('width','65%');
+      }
+    }
+    $('.grid').masonry('layout');
+  });
+
+  /*Check if user is using a phone*/
+  function checkMobile(){
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+     return true;
+    }
+    else{
+      return false;
+    }
+  }
 });
