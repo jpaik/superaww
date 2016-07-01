@@ -193,6 +193,7 @@ $(document).ready(function (){
      }else{
       if($('nav').is(":hidden")){
         $('nav').slideDown("fast");
+        $('nav').css('overflow','visible');
       }
      }
      lastScrollTop = st;
