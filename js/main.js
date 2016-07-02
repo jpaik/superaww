@@ -191,10 +191,15 @@ $(document).ready(function (){
      }
      if(st > lastScrollTop && st > 20){
        if($('nav').is(":visible")){
+         $('.navbar-header').slideUp("fast");
+         $('.navbar-collapse').slideUp("fast");
          $('nav').slideUp("fast");
        }
-     }else{
+     }
+     else{
       if($('nav').is(":hidden")){
+        $('.navbar-header').slideDown("fast");
+        $('.navbar-collapse').slideDown("fast");
         $('nav').slideDown("fast");
         $('nav').css('overflow','visible');
       }
