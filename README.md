@@ -8,7 +8,6 @@ Get gif links working instead of bruting them to jpg (Check the mime type)
 Add a check for removed sources or deleted photos  
 Get last loaded location using cookies?(lastID = cookie)  
 Add a multireddit to Dog pictures  
-Make the images click and draggable?(Maybe not needed)  
 Get a domain name and proper hosting?  
 ~~Display a navbar with info and functions~~  
 ~~Get the web application running~~  

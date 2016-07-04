@@ -69,13 +69,24 @@ function buildContent(title, imgurl, rawurl, imgext){
   var html = '<div class="grid-item panel panel-default '+ col +'"><div class="panel-heading text-center"><a href="'+rawurl +'">'+ title +'</a>'+'</div><div class="panel-body">';
 
   if($.inArray(imgext, ['gifv', 'gif', 'mp4', 'webm']) > -1 ){  //If the post is a gif, make it a webm and if not, mp4
-    var mp4 = imgurl.split('.')
-    var webm = imgurl.split('.');
-    mp4[mp4.length -1] = "mp4";
-    webm[webm.length -1 ] = "webm";
-    mp4 = mp4.join('.');
-    webm = webm.join('.');
-    html += '<img /><video controls="true" preload="auto" autoplay loop>'+'<source src="' + webm + '" type="video/webm">'+'<source src="' + mp4 + '"></video></div></div>' ;
+    if(imgurl.indexOf("gfycat") > -1){
+      var fat = imgurl.split('.');
+      var giant = imgurl.split('.');
+      fat[0] = "https://fat";
+      giant[0] = "https://giant";
+      fat = fat.join('.');
+      giant = giant.join('.');
+      html += '<img /><video controls="true" preload="auto" autoplay loop>'+'<source src="' + imgurl + '" type="video/webm">'+'<source src="' + fat + '" type="video/webm">'+'<source src="' + giant + '" type="video/webm">'+'</video></div></div>' ;
+    }
+    else{
+      var mp4 = imgurl.split('.')
+      var webm = imgurl.split('.');
+      mp4[mp4.length -1] = "mp4";
+      webm[webm.length -1 ] = "webm";
+      mp4 = mp4.join('.');
+      webm = webm.join('.');
+      html += '<img /><video controls="true" preload="auto" autoplay loop>'+'<source src="' + webm + '" type="video/webm">'+'<source src="' + mp4 + '"></video></div></div>' ;
+    }
   }
   else{
     html += '<a data-lightbox="set" data-title="'+title+'" href="'+imgurl+'">';
@@ -107,7 +118,7 @@ function fixURL(url){
     }
     else if((url.indexOf("gfycat") > -1) && ($.inArray(url.split('.').pop(), ['gif', 'gifv']) < 0)){
       var fix = url.split('/');
-      url = "https://" + "zippy.gfycat.com/" + fix[fix.length -1] + ".gifv";
+      url = "https://" + "zippy.gfycat.com/" + fix[fix.length -1] + ".webm";
     }
     else{
       url = http.join(':');
@@ -130,8 +141,8 @@ function checkSource(imgurl){
   if(imgurl.indexOf("imgur.com/a/") > -1 || imgurl.indexOf("imgur.com/gallery/") > -1){
     return false;
   }
-  //Create a whitelist so that non-whitelisted images are not shown. (&& imgurl.indexOf("gfycat") < 0) - Gfycat is wierd
-  if(imgurl.indexOf("imgur.com") < 0 && imgurl.indexOf("reddituploads") < 0  && imgurl.indexOf("redd.it")){
+  //Create a whitelist so that non-whitelisted images are not shown.
+  if(imgurl.indexOf("imgur.com") < 0 && imgurl.indexOf("reddituploads") < 0  && imgurl.indexOf("redd.it") && imgurl.indexOf("gfycat") < 0){
     return false;
   }
   return true;
